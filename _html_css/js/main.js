@@ -2,8 +2,20 @@
 const socket = io();
 const chatForm = document.getElementById('chat-form');
 const chatMessages = document.querySelector('.chat-messages');
+const cells = document.querySelectorAll('.cell');
 
 
+
+for (let i = 0; i < cells.length; i++) {
+    cells[i].addEventListener('click', () => {
+        socket.emit('move', i);
+    });
+}
+
+
+socket.on('move', move => {
+    cells[move].innerHTML = move;
+})
 
 socket.on('message', (msg) => {
 
@@ -28,9 +40,5 @@ chatForm.addEventListener('submit', (e) => {
 
     e.target.elements.msg.value = '';
     e.target.elements.msg.focus();
-
-
-
-
 
 })

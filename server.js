@@ -7,28 +7,33 @@ const app = express();
 const server = http.createServer(app);
 const io = socket(server);
 
-
 app.use(express.static(path.join(__dirname, '_html_css')))
-
-io.on('connection', socket => {
-    console.log("New websocket connection")
-
-    socket.emit('message', 'Hello welcome to the server');
-
-    socket.broadcast.emit('message', 'A user has joined the chat');
-
-    socket.on('disconnect', () => {
-        io.emit('message', 'A user has left the chat')
-    })
-
-    socket.on('chatMessage',(msg)=>{
-        io.emit('message',msg);
-    })
-});
-
-//Set static folder
-
 
 const PORT = 3000 || process.env.PORT;
 
 server.listen(PORT, console.log(`Server is running on ${PORT}`))
+
+let player = 1;
+
+    io.on('connection', socket => {
+        console.log("New websocket connection")
+
+        socket.emit('message', 'Hello welcome to the server player' + player);
+        socket.broadcast.emit('message', 'Player' + player + 'has joined the game');
+        player++;
+
+
+        socket.on('disconnect', () => {
+            io.emit('message', 'A user has left the chat')
+        })
+
+        socket.on('chatMessage', (msg) => {
+            io.emit('message', msg);
+        })
+
+        socket.on('move', (move)=> {
+            io.emit('move', move);
+        })
+    });
+
+//Set static folder
